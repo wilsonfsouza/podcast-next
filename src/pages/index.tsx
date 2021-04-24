@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { GetStaticProps } from 'next';
 import { api } from '../services/api';
 import { format, parseISO } from 'date-fns';
@@ -15,7 +16,6 @@ type Episode = {
   thumbnail: string;
   duration: number;
   durationAsString: string;
-  description: string;
   url: string;
 }
 
@@ -42,7 +42,9 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
               />
 
               <div className={styles.episodeDetails}>
-                <a href="">{episode.title}</a>
+                <Link href={`/episodes/${episode.id}`}>
+                  <a>{episode.title}</a>
+                </Link>
                 <p>{episode.members}</p>
                 <span>{episode.publishedAt}</span>
                 <span>{episode.durationAsString}</span>
@@ -59,12 +61,14 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
         <h2>All Episodes</h2>
         <table cellSpacing={0}>
           <thead>
-            <th></th>
-            <th>Podcast</th>
-            <th>Participants</th>
-            <th>Date</th>
-            <th>Duration</th>
-            <th></th>
+            <tr>
+              <th></th>
+              <th>Podcast</th>
+              <th>Participants</th>
+              <th>Date</th>
+              <th>Duration</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             {allEpisodes.map(episode => (
@@ -79,7 +83,9 @@ export default function Home({ allEpisodes, latestEpisodes }: HomeProps) {
                   />
                 </td>
                 <td>
-                  <a href="">{episode.title}</a>
+                  <Link href={`/episodes/${episode.id}`}>
+                    <a>{episode.title}</a>
+                  </Link>
                 </td>
                 <td>{episode.members}</td>
                 <td style={{ width: 120 }}>{episode.publishedAt}</td>
@@ -116,7 +122,6 @@ export const getStaticProps: GetStaticProps = async () => {
       publishedAt: format(parseISO(episode.published_at), 'MMM d yyyy', { locale: enUS }),
       duration: Number(episode.file.duration),
       durationAsString: convertDurationToTimeString(Number(episode.file.duration)),
-      description: episode.description,
       url: episode.file.url
     }
   });
